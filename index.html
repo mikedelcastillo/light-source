@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Light Source by Mike</title>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <style>
+      *{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+    <script>
+      let canvas = document.querySelector("#canvas");
+      let context = canvas.getContext("2d");
+
+      let source = {
+        sx: 0.8,
+        sy: -0.25,
+        ex: 0,
+        ey: 0.8,
+        size: 0,
+        spread: 150,
+        div: 10
+      }
+
+      let mouse = {
+        x: 0, y: 0
+      };
+
+      window.addEventListener("mousemove", e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }, false);
+
+      let loop = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        context.fillStyle = "rgb(56, 56, 56)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        let sx = source.sx * canvas.width;
+        let sy = source.sy * canvas.height;
+        source.ex += (mouse.x - source.ex) / source.div;
+        let ex = source.ex;
+        let ey = source.ey * canvas.height;
+
+        let alpha = 0;
+        let beta = 0;
+
+        context.resetTransform();
+        context.beginPath();
+        context.moveTo(sx - source.size, sy);
+        context.lineTo(sx + source.size, sy);
+        context.lineTo(ex + source.spread + alpha, ey);
+        context.lineTo(ex - source.spread + beta, ey);
+        context.fillStyle = "rgb(194, 195, 124)";
+        context.fill();
+
+        context.resetTransform();
+        context.translate(ex, ey);
+        context.scale(1, 0.25);
+        context.beginPath();
+        context.arc(0, 0, source.spread, 0, Math.PI * 2);
+        context.resetTransform();
+        context.fillStyle = "rgb(252, 255, 92)";
+        context.fill();
+
+        requestAnimationFrame(loop);
+      };
+
+      loop();
+    </script>
+  </body>
+</html>
